@@ -1,12 +1,30 @@
-;; File stud_io.inc for Linux O.S.
-;; Copyright (c) Andrey Vikt. Stolyarov, 2009.
-;; I, the author, hereby grant everyone the right to use this
-;; file for any purpose, in any manner, in it's original or
-;; modified form, provided that any modified versions are
-;; clearly marked as such.
+;; File stud_io.inc for both Linux and FreeBSD.
+;;
+;; Copyright (c) Andrey Vikt. Stolyarov, 2009, 2015, 2017, 2021
+;;
+;; I, the author, hereby grant everyone the right to use this file for any
+;; purpose, in any manner, in it's original or modified form, provided that
+;; modified versions are clearly marked as such AND the original author's
+;; copyright notice is kept along with the other authors' copyright notices
+;; as appropriate within the file.
+;;
+;; Only the file as such must retain the copyright notice.  Programs created
+;; using this file (e.g. binaries) don't need to have any mentions of the fact
+;; this file was used to create them.
+;;
+;; This file is provided as is, with absolutely NO WARRANTY, and this
+;; statement must be taken literally: "NO" means "NO", period.  Please be
+;; sure to search Internet for various types of warranty (e.g., implied,
+;; hidden, etc) and take into account that you don't have them all.
+;;
+
+%define STUD_IO_LINUX
+;%define STUD_IO_FREEBSD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; system dependend part
+
+%ifdef STUD_IO_LINUX
 
 ; generic 3-param syscall
 %macro _syscall_3 4
@@ -34,6 +52,31 @@
 	int 0x80
 %endmacro
 
+%elifdef STUD_IO_FREEBSD
+
+; generic 3-param syscall
+%macro _syscall_3 4
+	push	%4
+	push	%3
+	push	%2
+	mov	eax, %1
+	push	eax
+	int	0x80
+	add	esp, 16
+%endmacro
+
+%macro _syscall_exit 1
+	push	%1	; exit code
+	mov	eax, 1	; 1 = sys_exit
+	push	eax
+	int	0x80
+	; no cleanup - this will never return anyway
+%endmacro
+
+%else
+%error You must define either STUD_IO_LINUX or STUD_IO_FREEBSD
+%endif
+
 ;; system dependent part ends here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -54,7 +97,7 @@
 	pusha
 	pushf
 	jmp %%astr
-%%str	db	%1, 0
+%%str	db	%1
 %%strln	equ	$-%%str
 %%astr:	_syscall_write 1, %%str, %%strln
 	popf
@@ -88,11 +131,11 @@
 %else
 	mov	al, %1  ; let's hope it is a memory location such as [var]
 %endif
-	sub	esp, 2  ; reserve memory for buffer
+	sub	esp, 4  ; reserve memory for buffer
 	mov	edi, esp
 	mov	[edi], al
 	_syscall_write 1, edi, 1
-	add	esp, 2
+	add	esp, 4
 	popf
 	popa
 %endmacro
@@ -101,19 +144,19 @@
 %macro	GETCHAR 0
 	pushf
 	push	edi
-	sub	esp, 2
+	sub	esp, 4
 	mov	edi, esp
 	_syscall_read 0, edi, 1
 	cmp	eax, 1
 	jne	%%eof_reached
-	xor	eax,eax
+	xor	eax, eax
 	mov	al, [edi]
 	jmp	%%gcquit
 %%eof_reached:
 	xor	eax, eax
 	not	eax 		; eax := -1
 %%gcquit:
-	add	esp, 2
+	add	esp, 4
 	pop	edi
 	popf
 %endmacro
