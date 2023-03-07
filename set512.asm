@@ -10,9 +10,19 @@ lp:     mov [esi + 4 * ecx - 4], eax
 
 ; add to set512 from ebx
         mov cl, bl
-        and cl, 11111b
-        mov eax, 1
-        shl eax, cl
-        mov edx, ebx
-        shr edx, 5
-        or [set512 + 4 * edx], eax
+        and cl, 11111b                ; ebx % 32
+        mov eax, 1                    ;
+        shl eax, cl                   ; create mask
+        mov edx, ebx                  ;
+        shr edx, 5                    ; ebx // 32
+        or [set512 + 4 * edx], eax    ; apply mask
+
+; remove from set512
+        mov cl, bl
+        and cl, 11111b                ; ebx % 32
+        mov eax, 1                    ;
+        shl eax, cl                   ; create mask
+        not eax                       ; reverse
+        mov edx, ebx                  ;
+        shr edx, 5                    ; ebx // 32
+        and [set512 + 4 * edx], eax   ; apply mask
