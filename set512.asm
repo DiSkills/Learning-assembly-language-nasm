@@ -17,6 +17,23 @@ lp:     mov [esi + 4 * ecx - 4], eax
         shr edx, 5                    ; ebx // 32
         or [set512 + 4 * edx], eax    ; apply mask
 
+; count items
+        xor ebx, ebx                  ; counter = 0
+        mov ecx, 15                   ; last index
+lp:     mov eax, [set512 + 4 * ecx]   ; load item
+digit:  test eax, 1                   ; last digit is 1?
+        jz notone                     ; false -> jump
+        inc ebx                       ; true -> ebx++
+notone: shr eax, 1                    ; shift right
+        test eax, eax                 ; eax is empty?
+        jnz digit                     ; true -> jump
+
+        jecxz quit                    ; loop has been ended
+        dec ecx                       ;
+        jmp lp                        ;
+
+quit:
+
 ; remove from set512
         mov cl, bl
         and cl, 11111b                ; ebx % 32
