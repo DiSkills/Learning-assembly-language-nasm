@@ -5,7 +5,9 @@ section .text
 _start: PRINT "Input char: "
         GETCHAR
         cmp al, 'A'
-        jnz finish
+        jnz no
         PRINT "YES"
-        PUTCHAR 10
-finish: FINISH
+        jmp finish
+no:     PRINT "NO"
+finish: PUTCHAR 10
+        FINISH
