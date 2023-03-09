@@ -3,8 +3,8 @@ global _start
 
 section .text
 _start: GETCHAR                 ;
-        sub al, 30h             ;
-        cmp al, 9               ; 0 <= el <= 9
+        sub al, 30h             ; al - ord('0')
+        cmp al, 9               ; 0 <= al <= 9
         jnbe finish             ; if not -> finish
         mov cl, al              ; copy al -> cl
         jecxz finish            ; ecx == 0 -> finish
