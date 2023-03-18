@@ -7,13 +7,13 @@ _start: GETCHAR            ;
         je finish          ;
         cmp al, -1         ; if end of file -> finish
         je finish          ;
-        sub al, 30h        ; al - ord('0')
+        sub al, 30h        ; al -= ord('0')
         jz next            ; if al == 0 -> next char
-        cmp al, 9          ; 1 <= al <= 9
+        cmp al, 9          ; al <= 9 -> al - digit
         jnbe next          ; if not digit -> next char
 star:   PRINT '*'          ;
-        dec al             ;
-        jnz star           ;
-next:   jmp _start         ;
-finish: PUTCHAR 10         ;
+        dec al             ; al -= 1
+        jnz star           ; if al != 0 -> print next star
+next:   jmp _start         ; next iteration
+finish: PUTCHAR 10         ; print('\n')
         FINISH             ;
