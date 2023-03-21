@@ -23,6 +23,5 @@ line:   cmp al, 10     ; if not new line
 lp:     PRINT "*"      ; print stars
         loop lp        ;
         PUTCHAR 10     ; print('\n')
-        xor ecx, ecx   ; clear maximum length
         jmp input      ; go to next char
 finish: FINISH         ; finish
