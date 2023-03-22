@@ -19,7 +19,7 @@ space:      cmp ebx, 0          ; ebx == 0
             xor ebx, ebx        ; clear current length
             jmp char            ; go to next char
 line:       cmp ebx, 0          ; ebx == 0
-            je output           ; go to _
+            je output           ; go to output
             mov ecx, ebx        ; ecx = ebx (last word)
             xor ebx, ebx        ; clear current length
 output:     jecxz char          ; length last word == 0 -> go to next char (line)
