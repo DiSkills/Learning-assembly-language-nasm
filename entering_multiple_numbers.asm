@@ -3,9 +3,10 @@ global _start
 
 section .data
 space db ' '
-end_line db 10
 number dd 0
 quantity dd 2
+end_line db 10
+undefined dd -1
 number_system dd 10
 
 section .bss
@@ -28,7 +29,7 @@ input_numbers:
             mov ecx, [quantity]
 input:
             mov dword [number], 0
-            mov ebx, -1
+            mov ebx, [undefined]
 char:
             GETCHAR
             sub eax, '0'
@@ -41,7 +42,7 @@ char:
             mov [number], eax
             jmp char
 not_a_number:
-            cmp ebx, -1
+            cmp ebx, [undefined]
             je error
             add eax, '0'
             cmp [esi + ecx * 1 - 1], al
