@@ -25,27 +25,33 @@ section .bss
 digits resb 10
 separators resb 2
 
-result resd 3
-numbers resd 2
+; input data
+input_data resd 2
+; output data
+output_data resd 3
 
 
 section .text
 _start:
-        mov esi, separators
-        mov al, [space]
-        mov ecx, [input_size]
+
+separators_initialization:
+        mov ecx, [input_size]            ; number of separators
+        mov edi, separators              ; separators address
+        mov al, [space]                  ; separator by default is space
 add_separator:
-        mov [esi + ecx * 1 - 1], al
+        mov [edi + ecx * 1 - 1], al
         loop add_separator
 last_separator:
-        mov al, [end_line]
-        mov [esi], al
-input_numbers:
-        mov edi, numbers
-        mov ecx, [input_size]
-input:
-        mov dword [number], 0
-        mov ebx, [undefined]
+        mov al, [end_line]               ; last separator by default is <CR>
+        mov [edi], al                    ; changing the last separator
+
+getting_input_data:
+        mov ecx, [input_size]            ; number of input data
+        mov esi, separators              ; separators address
+        mov edi, input_data              ; input data address
+number_entry:
+        mov [number], dword 0            ; number by default is 0
+        mov ebx, [undefined]             ; current digit by default is undefined
 char:
         GETCHAR
         sub eax, '0'
@@ -65,10 +71,11 @@ not_a_number:
         jne error
         mov eax, [number]
         mov [edi + ecx * 4 - 4], eax
-        loop input
+        loop number_entry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 get_indexes:
-        mov esi, numbers
-        mov edi, result
+        mov esi, input_data
+        mov edi, output_data
 get_numbers:
         mov eax, [esi + 4]
         mov [number], eax
@@ -86,7 +93,7 @@ product:
         mul dword [number2]
         mov [edi], eax
 output:
-        mov esi, result
+        mov esi, output_data
         mov edi, digits
         mov ecx, [output_size]
 print_number:
