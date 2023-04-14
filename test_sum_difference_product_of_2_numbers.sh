@@ -23,6 +23,7 @@ done <<END
     7f83 Error
     832\ 8f Error
     931\ qf Error
+    8563\ 8953\  Error
 END
 
 rm $filename.o $filename
