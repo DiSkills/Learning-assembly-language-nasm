@@ -4,6 +4,7 @@ global _start
 
 section .data
 ; chars
+zero db '0'
 space db ' '
 end_line db 10
 
@@ -35,43 +36,43 @@ section .text
 _start:
 
 separators_initialization:
-        mov ecx, [input_size]            ; number of separators
-        mov edi, separators              ; separators address
-        mov al, [space]                  ; separator by default is space
+        mov ecx, [input_size]        ; number of separators
+        mov al, [space]              ; separator by default is space
 add_separator:
-        mov [edi + ecx * 1 - 1], al
+        mov [separators + ecx * 1 - 1], al
         loop add_separator
 last_separator:
-        mov al, [end_line]               ; last separator by default is <CR>
-        mov [edi], al                    ; changing the last separator
+        mov al, [end_line]           ; last separator by default is <CR>
+        mov [separators], al         ; changing the last separator
 
 getting_input_data:
-        mov ecx, [input_size]            ; number of input data
-        mov esi, separators              ; separators address
-        mov edi, input_data              ; input data address
+        mov ecx, [input_size]        ; number of input data
 number_entry:
-        mov [number], dword 0            ; number by default is 0
-        mov ebx, [undefined]             ; current digit by default is undefined
-char:
-        GETCHAR
-        sub eax, '0'
-        cmp eax, 9
-        jnbe not_a_number
-        mov ebx, eax
-        mov eax, [number]
-        mul dword [number_system]
-        add eax, ebx
-        mov [number], eax
-        jmp char
-not_a_number:
-        cmp ebx, [undefined]
-        je error
-        add eax, '0'
-        cmp [esi + ecx * 1 - 1], al
-        jne error
-        mov eax, [number]
-        mov [edi + ecx * 4 - 4], eax
-        loop number_entry
+        cmp ecx, 0                   ; if the numbers are entered
+        je get_indexes               ; proceed to processing
+        mov [number], dword 0        ; number by default is 0
+        mov ebx, [undefined]         ; current digit by default is undefined
+character_processing:
+        GETCHAR                      ; character reading
+        sub al, [zero]               ; subtract zero code from character
+        cmp eax, 9                   ; if the character is not a digit
+        jnbe processing_not_a_number ; then we treat it as a separator
+        mov ebx, eax                 ; save the current digit
+        mov eax, [number]            ; current number
+        mul dword [number_system]    ; multiply by number system
+        add eax, ebx                 ; add with the current digit
+        mov [number], eax            ; save the current number
+        jmp character_processing     ; process the next character
+processing_not_a_number:
+        cmp ebx, [undefined]         ; if there were no numbers
+        je error                     ; then throw an error
+        add al, [zero]               ; add zero code to get character
+        cmp [separators + ecx * 1 - 1], al ; if the character is not a separator
+        jne error                    ; then throw an error
+        mov eax, [number]            ; current number
+        mov [input_data + ecx * 4 - 4], eax ; save the current number
+        dec ecx                      ; one number entered
+        jmp number_entry             ; process the next number
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 get_indexes:
         mov esi, input_data
