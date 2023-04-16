@@ -39,7 +39,7 @@ separators_initialization:
         mov ecx, [input_size]        ; number of separators
         mov al, [space]              ; separator by default is space
 add_separator:
-        mov [separators + ecx * 1 - 1], al
+        mov [separators + ecx * 1 - 1], al ; adding the current separator
         loop add_separator
 last_separator:
         mov al, [end_line]           ; last separator by default is <CR>
@@ -56,7 +56,7 @@ character_processing:
         GETCHAR                      ; character reading
         sub al, [zero]               ; subtract zero code from character
         cmp eax, 9                   ; if the character is not a digit
-        jnbe processing_not_a_number ; then we treat it as a separator
+        jnbe processing_not_a_number ; then we treat it as not a number
         mov ebx, eax                 ; save the current digit
         mov eax, [number]            ; current number
         mul dword [number_system]    ; multiply by number system
@@ -64,7 +64,7 @@ character_processing:
         mov [number], eax            ; save the current number
         jmp character_processing     ; process the next character
 processing_not_a_number:
-        cmp ebx, [undefined]         ; if there were no numbers
+        cmp ebx, [undefined]         ; if there were no digits
         je error                     ; then throw an error
         add al, [zero]               ; add zero code to get character
         cmp [separators + ecx * 1 - 1], al ; if the character is not a separator
