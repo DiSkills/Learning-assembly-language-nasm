@@ -41,7 +41,7 @@ separators_initialization:
 add_separator:
         mov [separators + ecx * 1 - 1], al ; adding the current separator
         loop add_separator
-last_separator:
+changing_last_separator:
         mov al, [end_line]           ; last separator by default is <CR>
         mov [separators], al         ; changing the last separator
 
@@ -49,7 +49,7 @@ getting_input_data:
         mov ecx, [input_size]        ; number of input data
 number_entry:
         cmp ecx, 0                   ; if the numbers are entered
-        je get_indexes               ; proceed to processing
+        je number_processing         ; proceed to processing
         mov [number], dword 0        ; number by default is 0
         mov ebx, [undefined]         ; current digit by default is undefined
 character_processing:
@@ -73,26 +73,23 @@ processing_not_a_number:
         mov [input_data + ecx * 4 - 4], eax ; save the current number
         dec ecx                      ; one number entered
         jmp number_entry             ; process the next number
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-get_indexes:
-        mov esi, input_data
-        mov edi, output_data
-get_numbers:
-        mov eax, [esi + 4]
-        mov [number], eax
-        mov eax, [esi]
-        mov [number2], eax
-sum:
-        add eax, [number]
-        mov [edi + 2 * 4], eax
-difference:
-        mov eax, [number]
-        sub eax, [number2]
-        mov [edi + 1 * 4], eax
-product:
-        mov eax, [number]
-        mul dword [number2]
-        mov [edi], eax
+
+number_processing:
+        mov eax, [input_data + 4]    ; get the first number
+        mov [number], eax            ; save the first number
+        mov eax, [input_data]        ; get the second number
+        mov [number2], eax           ; save the second number
+getting_amount:
+        add eax, [number]            ; number2 + number1
+        mov [output_data + 2 * 4], eax ; save the sum of numbers
+getting_difference:
+        mov eax, [number]            ; get the first number
+        sub eax, [number2]           ; number1 - number2
+        mov [output_data + 1 * 4], eax ; save the difference of numbers
+getting_product:
+        mov eax, [number]            ; get the first number
+        mul dword [number2]          ; number1 * number2
+        mov [output_data], eax       ; save the product of numbers
 output:
         mov esi, output_data
         mov edi, digits
