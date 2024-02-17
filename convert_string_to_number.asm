@@ -3,7 +3,6 @@ global _start
 
 
 section .text
-
 ; convert_string_to_number(адрес строки, длина строки)
 ; -> eax - число, ecx - код завершения (1 - ошибка, 0 - успех)
 convert_string_to_number: ; конвертация строки в число
@@ -46,8 +45,8 @@ convert_string_to_number: ; конвертация строки в число
                                 ; если произошла ошибка, то ecx=1
                                 ; иначе число в eax, ecx=0
 
-section .data
 
+section .data
 string db "123456"
 length dd 6
 
