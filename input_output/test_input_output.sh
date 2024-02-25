@@ -1,6 +1,6 @@
 #!/bin/bash
 
-filename=input_number
+filename=input_output
 
 nasm -f elf input_number_in_string_repr.asm
 nasm -f elf convert_string_to_number.asm
@@ -16,18 +16,11 @@ while read input output; do
         echo "TEST '$input' FAILED: expected '$output', got '$result'"
     fi
 done <<END
-    0
-    1 *
-    2 **
-    3 ***
-    4 ****
-    5 *****
-    6 ******
-    7 *******
-    8 ********
-    9 *********
-    10 **********
-    22 **********************
+    0 0
+    109 109
+    888 888
+    1980198 1980198
+    -89 -89
 END
 
 rm *.o $filename
