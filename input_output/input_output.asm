@@ -1,8 +1,7 @@
 %include "stud_io.inc"
 global _start                   ; делаем точку входа глобальной
 
-extern input_string             ; подключаем ввод
-extern convert_string_to_number ;
+extern input_number             ; подключаем ввод
 extern convert_number_to_string ; подключаем вывод
 extern print_string
 
@@ -18,15 +17,10 @@ max_length dd 11
 
 section .text
 _start:
-        push dword string
-        push dword [max_length]
-        call input_string
-
-        push dword string
-        push eax
-        call convert_string_to_number
-
-        mov [number], eax
+        push dword number
+        call input_number
+        
+        nop
 ; output
         push dword [number]
         push dword string

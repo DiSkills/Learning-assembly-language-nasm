@@ -2,6 +2,7 @@
 global input_string_repr
 
 
+section .text
 ; input_string_repr(адрес начала строки, длина строки)
 ; -> eax - количество разрядов числа (знак тоже разряд), ecx - код завершения
 ; (0 - успех, 1 - число не введено, -1 - eof, -2 - overflow,
