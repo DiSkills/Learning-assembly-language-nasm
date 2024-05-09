@@ -1,8 +1,6 @@
 #!/bin/bash
 
-filename=unsigned_input_output
-
-make compile file=$filename
+filename=$1
 
 while read input output; do
     result=`echo "$input" | ./$filename`
@@ -22,5 +20,3 @@ done <<END
     84573 84573
     -9783 4294957513
 END
-
-make delete file=$filename
