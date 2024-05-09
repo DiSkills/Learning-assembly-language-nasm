@@ -1,4 +1,7 @@
 %include "stud_io.inc"
+%include "function_macros.inc"
+
+
 global print_string_repr
 
 
@@ -11,8 +14,8 @@ print_string_repr: ; вывод строкового представления 
         push esi                ; сохраняем esi
         push ecx                ; сохраняем ecx
 
-        mov ecx, [ebp + 8]      ; в ecx длина строки
-        mov esi, [ebp + 12]     ; в esi адрес начала строки
+        mov esi, [arg(1)]       ; в esi адрес начала строки
+        mov ecx, [arg(2)]       ; в ecx длина строки
 
 ; выводить знак или нет?
         cmp byte [esi], '+'     ; знак - '+'?
@@ -33,4 +36,4 @@ print_string_repr: ; вывод строкового представления 
 
         mov esp, ebp            ; восстанавливаем esp
         pop ebp                 ; восстанавливаем ebp
-        ret 8                   ; возвращаем управление с очисткой стека
+        ret                     ; возвращаем управление

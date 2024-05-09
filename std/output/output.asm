@@ -1,3 +1,6 @@
+%include "function_macros.inc"
+
+
 global output_number
 global ioutput_number
 
@@ -19,13 +22,9 @@ _output_number: ; вывод заданного числа
         mov edi, ebp            ; в edi адрес строки
         sub edi, 12             ; ставим edi на начало
 ; переводим число в строковое представление
-        push edi                ; передаём адрес строки для строкового представления
-        push dword [ebp + 8]    ; передаём число
-        call dword [ebp + 12]   ; вызываем п/программу для конвертации вывода
+        pcall dword [arg(1)], edi, [arg(2)]
 ; выводим строковое представление числа
-        push edi                ; передаём адрес строкового представления числа
-        push eax                ; передаём длину строки
-        call print_string_repr  ; вызываем п/программу вывода
+        pcall print_string_repr, edi, eax
 
 .quit: ; завершение п/программы
         pop eax                 ; восстанавливаем eax
@@ -33,20 +32,16 @@ _output_number: ; вывод заданного числа
 
         mov esp, ebp            ; восстанавливаем esp
         pop ebp                 ; восстанавливаем ebp
-        ret 8                   ; возвращаем управление с очисткой стека
+        ret                     ; возвращаем управление
 
 
 ; output_number(число)
 output_number: ; вывод беззнакового числа
-        push dword convert_to_string ; передаём п/программу вывода
-        push dword [esp + 8]    ; передаём число
-        call _output_number     ; вызываем вывод
-        ret 4                   ; возвращаем управление с очисткой стека
+        pcall _output_number, convert_to_string, [esp + 4]
+        ret                     ; возвращаем управление
 
 
 ; ioutput_number(число)
 ioutput_number: ; вывод знакового числа
-        push dword iconvert_to_string ; передаём п/программу вывода
-        push dword [esp + 8]    ; передаём число
-        call _output_number     ; вызываем вывод
-        ret 4                   ; возвращаем управление с очисткой стека
+        pcall _output_number, iconvert_to_string, [esp + 4]
+        ret                     ; возвращаем управление

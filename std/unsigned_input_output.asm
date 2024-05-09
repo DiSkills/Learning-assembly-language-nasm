@@ -17,8 +17,7 @@ _start:
 ; input
         pcall input_number, number
 ; output
-        push dword [number]
-        call output_number
+        pcall output_number, [number]
 finish:
         PUTCHAR 10
         FINISH
