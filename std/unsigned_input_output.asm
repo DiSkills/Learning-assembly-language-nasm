@@ -1,4 +1,7 @@
 %include "stud_io.inc"
+%include "function_macros.inc"
+
+
 global _start                   ; делаем точку входа глобальной
 
 extern input_number             ; подключаем ввод
@@ -12,8 +15,7 @@ number resd 1
 section .text
 _start:
 ; input
-        push dword number
-        call input_number
+        pcall input_number, number
 ; output
         push dword [number]
         call output_number
