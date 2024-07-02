@@ -1,34 +1,38 @@
+; системный вызов с 1 параметром
 %macro _syscall1 2
-    push ebx
+    push ebx                    ; сохраняем ebx
 
-    mov ebx, %2
-    mov eax, %1
-    int 80h
+    mov ebx, %2                 ; передаём 1 параметр
+    mov eax, %1                 ; передаём код системного вызова
+    int 80h                     ; вызов ОС
 
-    pop ebx
+    pop ebx                     ; восстанавливаем ebx
 %endmacro
 
 
+; системный вызов с 2 параметрами
 %macro _syscall2 3
-    push ecx
+    push ecx                    ; сохраняем ecx
 
-    mov ecx, %3
-    _syscall1 %1, %2
+    mov ecx, %3                 ; передаём 2 параметр
+    _syscall1 %1, %2            ; используем системный вызов с 1 параметром
 
-    pop ecx
+    pop ecx                     ; восстанавливаем ecx
 %endmacro
 
 
+; системный вызов с 3 параметрами
 %macro _syscall3 4
-    push edx
+    push edx                    ; сохраняем edx
 
-    mov edx, %4
-    _syscall2 %1, %2, %3
+    mov edx, %4                 ; передаём 3 параметр
+    _syscall2 %1, %2, %3        ; используем системный вызов с 2 параметрами
 
-    pop edx
+    pop edx                     ; восстанавливаем edx
 %endmacro
 
 
+; системный вызов (код, параметры [1-3])
 %macro scall 2-4
     %if %0 == 2
         _syscall1 %1, %2
